@@ -6,6 +6,20 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { compare } from "bcryptjs";
 
+// --- Helpers ---
+
+const retryWithDelay = async <T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> => {
+    try {
+        return await fn();
+    } catch (error: any) {
+        if (retries > 0 && (error?.code === 'P2024' || error?.message?.includes('Too many database connections'))) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return retryWithDelay(fn, retries - 1, delay * 2);
+        }
+        throw error;
+    }
+};
+
 // --- Auth ---
 
 export async function login(prevState: any, formData: FormData) {
@@ -81,7 +95,7 @@ export async function createPost(prevState: any, formData: FormData) {
         const existing = await prisma.post.findUnique({ where: { slug } });
         if (existing) return { error: "Slug já existe." };
 
-        await prisma.post.create({
+        await retryWithDelay(() => prisma.post.create({
             data: {
                 title,
                 slug,
@@ -91,7 +105,7 @@ export async function createPost(prevState: any, formData: FormData) {
                 categoryName, // Compatibility field
                 categoryId: categoryConnectId
             },
-        });
+        }));
 
     } catch (e: any) {
         return { error: "Erro ao criar post: " + e.message };
@@ -127,7 +141,7 @@ export async function updatePost(prevState: any, formData: FormData) {
     }
 
     try {
-        await prisma.post.update({
+        await retryWithDelay(() => prisma.post.update({
             where: { id },
             data: {
                 title,
@@ -138,7 +152,7 @@ export async function updatePost(prevState: any, formData: FormData) {
                 categoryName,
                 categoryId: categoryConnectId
             },
-        });
+        }));
     } catch (e: any) {
         return { error: "Erro ao atualizar post: " + e.message };
     }
