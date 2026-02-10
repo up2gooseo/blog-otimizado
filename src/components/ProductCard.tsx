@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from "next/image";
 
 interface Product {
     id: number;
@@ -19,10 +20,12 @@ export default function ProductCard({ product }: { product: Product }) {
         >
             <div className="aspect-square bg-gray-100 overflow-hidden relative">
                 {product.imageUrl ? (
-                    <img
+                    <Image
                         src={product.imageUrl}
                         alt={product.title}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 p-4"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-contain transition-transform duration-500 group-hover:scale-105 p-4"
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-tr from-gray-100 to-gray-200" />

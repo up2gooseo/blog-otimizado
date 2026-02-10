@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import Link from 'next/link';
 import { Post } from '@prisma/client';
+import Image from "next/image";
 
 interface PostCarouselProps {
     posts: Post[];
@@ -58,15 +59,20 @@ export default function PostCarousel({ posts, title = "Conteúdos relacionados" 
                         className="min-w-[280px] md:min-w-[320px] lg:min-w-[calc(33.333%-16px)] snap-start group bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
                     >
                         <Link href={`/${post.slug}`} className="block aspect-[16/10] overflow-hidden relative bg-neutral-100">
-                            {post.imageUrl ? (
-                                <img
-                                    src={post.imageUrl.startsWith('/') ? post.imageUrl : `/${post.imageUrl}`}
-                                    alt={post.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-gradient-to-tr from-gray-100 to-gray-200" />
-                            )}
+
+                            {
+                                post.imageUrl ? (
+                                    <Image
+                                        src={post.imageUrl.startsWith('/') ? post.imageUrl : `/${post.imageUrl}`}
+                                        alt={post.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-tr from-gray-100 to-gray-200" />
+                                )
+                            }
                         </Link>
                         <div className="p-5 flex flex-col flex-1">
                             <span className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-wider mb-2 block">

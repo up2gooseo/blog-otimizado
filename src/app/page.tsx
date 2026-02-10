@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import FAQSection from "@/components/FAQSection";
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -47,10 +48,14 @@ export default async function Home() {
               <article key={post.id} className="post-card group">
                 <div className="aspect-video bg-neutral-200 overflow-hidden post-image-wrapper relative">
                   {post.imageUrl ? (
-                    <img
+                    // ...
+                    <Image
                       src={post.imageUrl.startsWith('/') ? post.imageUrl : `/${post.imageUrl}`}
                       alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      priority={categories.indexOf(category) === 0} // Priority for first category
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-tr from-gray-200 to-gray-300" />

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // Using Inter from Google Fonts via Next.js
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -40,7 +41,17 @@ export default async function RootLayout({
           <header className="site-header">
             <div className="container flex justify-between items-center w-full">
               <Link href="/" className="logo block">
-                <img src="/logo.png" alt="Bom Trabalho Blog" className="h-12 w-auto object-contain" />
+                // ... inside component
+                <Link href="/" className="logo block">
+                  <Image
+                    src="/logo.png"
+                    alt="Bom Trabalho Blog"
+                    width={200}
+                    height={48}
+                    className="h-12 w-auto object-contain"
+                    priority
+                  />
+                </Link>
               </Link>
               <nav className="hidden md:flex gap-8 main-nav">
                 {categories.map(cat => (
